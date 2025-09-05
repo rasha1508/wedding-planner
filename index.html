@@ -1,0 +1,2489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wedding Planning Widget</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Parisienne&family=Montserrat:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: transparent;
+        color: #4a4a4a;
+        line-height: 1.6;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      body.dark-mode {
+        color: #e0e0e0;
+      }
+
+      /* Widget Container */
+      .widget-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+      }
+      body.dark-mode .widget-container {
+        background-color: #2d2d2d;
+        border-color: #444;
+      }
+
+      /* Widget Content */
+      .widget-content {
+        padding: 15px;
+      }
+
+      /* Original styles with adjustments */
+      header {
+        text-align: center;
+        margin-bottom: 15px;
+        position: relative;
+      }
+      header::before {
+        content: "";
+        display: block;
+        width: 100px;
+        height: 2px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          #d4a5a5,
+          transparent
+        );
+        margin: 0 auto 15px;
+      }
+      h1 {
+        font-family: "Parisienne", cursive;
+        font-size: 28px;
+        color: #a67c7c;
+        margin-bottom: 8px;
+        font-weight: 400;
+        letter-spacing: 1px;
+      }
+      body.dark-mode h1 {
+        color: #d4a5a5;
+      }
+      .subtitle {
+        font-family: "Montserrat", sans-serif;
+        font-style: italic;
+        font-size: 16px;
+        color: #a67c7c;
+        margin-bottom: 15px;
+        font-weight: 300;
+      }
+      body.dark-mode .subtitle {
+        color: #d4a5a5;
+      }
+      /* Dark Mode Toggle */
+      .dark-mode-toggle {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: none;
+        border: none;
+        color: #a67c7c;
+        font-size: 18px;
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+      body.dark-mode .dark-mode-toggle {
+        color: #d4a5a5;
+      }
+      /* Search Bar */
+      .search-container {
+        max-width: 100%;
+        margin: 0 auto 15px;
+        position: relative;
+      }
+      .search-input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        border-radius: 25px;
+        border: 1px solid #d4a5a5;
+        background-color: #fff;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      body.dark-mode .search-input {
+        background-color: #444;
+        border-color: #d4a5a5;
+        color: #e0e0e0;
+      }
+      .search-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(212, 165, 165, 0.3);
+      }
+      .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a67c7c;
+      }
+      body.dark-mode .search-icon {
+        color: #d4a5a5;
+      }
+      /* Events Component */
+      .events-component {
+        margin-bottom: 15px;
+      }
+      .tab-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+      .tab-button {
+        padding: 6px 12px;
+        background-color: #fff;
+        border: none;
+        border-radius: 20px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        color: #a67c7c;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+      }
+      body.dark-mode .tab-button {
+        background-color: #444;
+        color: #d4a5a5;
+      }
+      .tab-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color: #a67c7c;
+      }
+      body.dark-mode .tab-button:hover {
+        color: #d4a5a5;
+      }
+      .tab-button.active {
+        background: linear-gradient(135deg, #d4a5a5, #c19696);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(166, 124, 124, 0.2);
+      }
+      .tab-icon {
+        margin-right: 5px;
+        font-size: 10px;
+      }
+      .filter-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .filter-btn {
+        padding: 6px 15px;
+        border-radius: 15px;
+        background-color: #fff;
+        border: 1px solid #d4a5a5;
+        color: #a67c7c;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Montserrat", sans-serif;
+        font-size: 12px;
+      }
+      body.dark-mode .filter-btn {
+        background-color: #444;
+        border-color: #d4a5a5;
+        color: #d4a5a5;
+      }
+      .filter-btn:hover,
+      .filter-btn.active {
+        background-color: #d4a5a5;
+        color: white;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .task-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+      }
+      .task-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      body.dark-mode .task-card {
+        background-color: #3a3a3a;
+      }
+      .task-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      }
+      .task-card.completed {
+        opacity: 0.8;
+      }
+      .task-card.completed .task-text {
+        text-decoration: line-through;
+        color: #aaa;
+      }
+      body.dark-mode .task-card.completed .task-text {
+        color: #888;
+      }
+      .task-header {
+        padding: 15px;
+        display: flex;
+        align-items: flex-start;
+      }
+      .task-checkbox {
+        position: relative;
+        width: 18px;
+        height: 18px;
+        margin-right: 12px;
+        cursor: pointer;
+        -webkit-appearance: none;
+        appearance: none;
+        border: 2px solid #d4a5a5;
+        border-radius: 4px;
+        background-color: #fff;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      body.dark-mode .task-checkbox {
+        background-color: #444;
+      }
+      .task-checkbox:checked {
+        background-color: #d4a5a5;
+        border-color: #d4a5a5;
+      }
+      .task-checkbox:checked::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+      }
+      .task-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .task-text {
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        color: #4a4a4a;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+      body.dark-mode .task-text {
+        color: #e0e0e0;
+      }
+      .task-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .task-status {
+        padding: 3px 8px;
+        border-radius: 15px;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .status-not-started {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      .status-in-progress {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .task-due-date {
+        font-size: 11px;
+        color: #a67c7c;
+      }
+      body.dark-mode .task-due-date {
+        color: #d4a5a5;
+      }
+      .task-notes {
+        font-size: 12px;
+        color: #777;
+        font-style: italic;
+        flex-grow: 1;
+        margin-bottom: 8px;
+      }
+      body.dark-mode .task-notes {
+        color: #bbb;
+      }
+      .task-footer {
+        padding: 12px 15px;
+        background-color: #f9f7f7;
+        border-top: 1px solid #f0e6e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+      }
+      body.dark-mode .task-footer {
+        background-color: #333;
+        border-top: 1px solid #555;
+      }
+      .task-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .task-action {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a67c7c;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      body.dark-mode .task-action {
+        background-color: #444;
+        color: #d4a5a5;
+      }
+      .task-action:hover {
+        background-color: #d4a5a5;
+        color: white;
+      }
+      .task-action.delete:hover {
+        background-color: #ff6b6b;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #a67c7c;
+      }
+      body.dark-mode .empty-state {
+        color: #d4a5a5;
+      }
+      .empty-state i {
+        font-size: 36px;
+        color: #d4a5a5;
+        margin-bottom: 10px;
+      }
+      /* Edit Mode */
+      .task-edit-input {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #d4a5a5;
+        border-radius: 4px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      body.dark-mode .task-edit-input {
+        background-color: #444;
+        border-color: #d4a5a5;
+        color: #e0e0e0;
+      }
+      .task-edit-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .task-edit-btn {
+        padding: 4px 10px;
+        border: none;
+        border-radius: 4px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .task-edit-save {
+        background-color: #d4a5a5;
+        color: white;
+      }
+      .task-edit-cancel {
+        background-color: #f1f1f1;
+        color: #555;
+      }
+      body.dark-mode .task-edit-cancel {
+        background-color: #555;
+        color: #e0e0e0;
+      }
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+      }
+      .action-btn {
+        padding: 8px 16px;
+        border-radius: 20px;
+        background-color: #fff;
+        border: 1px solid #d4a5a5;
+        color: #a67c7c;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+      }
+      body.dark-mode .action-btn {
+        background-color: #444;
+        border-color: #d4a5a5;
+        color: #d4a5a5;
+      }
+      .action-btn:hover {
+        background-color: #d4a5a5;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .action-btn i {
+        margin-right: 6px;
+      }
+      /* Add Task Form */
+      .add-task-form {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        z-index: 200;
+        width: 90%;
+        max-width: 500px;
+        border: 2px solid #d4a5a5;
+        display: none;
+      }
+
+      body.dark-mode .add-task-form {
+        background-color: #3a3a3a;
+        border-color: #d4a5a5;
+      }
+
+      .add-task-form h3 {
+        font-family: "Parisienne", cursive;
+        font-size: 24px;
+        color: #a67c7c;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      body.dark-mode .add-task-form h3 {
+        color: #d4a5a5;
+      }
+
+      .add-task-form-group {
+        margin-bottom: 15px;
+      }
+
+      .add-task-form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #4a4a4a;
+      }
+
+      body.dark-mode .add-task-form-label {
+        color: #e0e0e0;
+      }
+
+      .add-task-form-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #d4a5a5;
+        border-radius: 4px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+      }
+
+      body.dark-mode .add-task-form-input {
+        background-color: #444;
+        border-color: #d4a5a5;
+        color: #e0e0e0;
+      }
+
+      .add-task-form-input.error {
+        border-color: #ff6b6b;
+        background-color: #fff8f8;
+      }
+
+      body.dark-mode .add-task-form-input.error {
+        background-color: #553333;
+        border-color: #ff6b6b;
+      }
+
+      .add-task-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .add-task-form-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .add-task-form-cancel {
+        background-color: #f1f1f1;
+        color: #555;
+      }
+
+      body.dark-mode .add-task-form-cancel {
+        background-color: #555;
+        color: #e0e0e0;
+      }
+
+      .add-task-form-save {
+        background-color: #d4a5a5;
+        color: white;
+      }
+
+      .task-text-error {
+        color: #ff6b6b;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .task-text-error.show {
+        display: block;
+      }
+
+      /* Reminder Widget */
+      .reminder-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 320px;
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        border: 2px solid #d4a5a5;
+      }
+      body.dark-mode .reminder-widget {
+        background-color: #3a3a3a;
+        border-color: #d4a5a5;
+      }
+      .reminder-widget.collapsed {
+        height: 50px;
+      }
+      .reminder-widget.expanded {
+        height: 400px;
+      }
+      .reminder-widget-header {
+        padding: 15px;
+        background: linear-gradient(135deg, #d4a5a5, #c19696);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+      }
+      .reminder-widget-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 3C7.82 3 2 8.82 2 16s5.82 13 13 13 13-5.82 13-13S22.18 3 15 3zm0 2c6.08 0 11 4.92 11 11s-4.92 11-11 11S4 22.08 4 16 8.92 5 15 5zm0 2c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
+      }
+      .reminder-widget-title {
+        font-family: "Parisienne", cursive;
+        font-size: 22px;
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+        z-index: 1;
+      }
+      .reminder-widget-title i {
+        margin-right: 8px;
+        color: #fff;
+      }
+      .reminder-widget-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.3s;
+        z-index: 1;
+      }
+      .reminder-widget.expanded .reminder-widget-toggle {
+        transform: rotate(180deg);
+      }
+      .reminder-widget-content {
+        padding: 15px;
+        height: calc(100% - 50px);
+        overflow-y: auto;
+        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4a5a5' fill-opacity='0.05'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+      }
+      .reminder-list {
+        list-style: none;
+      }
+      .reminder-item {
+        background-color: #f9f7f7;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        position: relative;
+        border-left: 4px solid #d4a5a5;
+        transition: all 0.3s ease;
+      }
+      body.dark-mode .reminder-item {
+        background-color: #444;
+        border-left-color: #d4a5a5;
+      }
+      .reminder-item.active {
+        background: linear-gradient(135deg, #f0e6e6, #e6d9d9);
+        border-left-color: #a67c7c;
+        animation: pulse 1.5s infinite;
+        box-shadow: 0 5px 15px rgba(166, 124, 124, 0.3);
+      }
+      body.dark-mode .reminder-item.active {
+        background: linear-gradient(135deg, #554448, #664448);
+        border-left-color: #d4a5a5;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(166, 124, 124, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(166, 124, 124, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(166, 124, 124, 0);
+        }
+      }
+      .reminder-task {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #a67c7c;
+      }
+      body.dark-mode .reminder-task {
+        color: #d4a5a5;
+      }
+      .reminder-datetime {
+        font-size: 14px;
+        color: #a67c7c;
+        margin-bottom: 8px;
+      }
+      body.dark-mode .reminder-datetime {
+        color: #d4a5a5;
+      }
+      .reminder-note {
+        font-size: 14px;
+        font-style: italic;
+        color: #777;
+        margin-bottom: 10px;
+      }
+      body.dark-mode .reminder-note {
+        color: #bbb;
+      }
+      .reminder-actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .reminder-delete {
+        background: none;
+        border: none;
+        color: #ff6b6b;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        padding: 5px 10px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .reminder-delete:hover {
+        background-color: #ff6b6b;
+        color: white;
+      }
+      .reminder-empty {
+        text-align: center;
+        padding: 20px;
+        color: #a67c7c;
+      }
+      body.dark-mode .reminder-empty {
+        color: #d4a5a5;
+      }
+      /* Quick Reminder Form */
+      .quick-reminder-form {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid #d4a5a5;
+      }
+      body.dark-mode .quick-reminder-form {
+        background-color: #444;
+        border-color: #d4a5a5;
+      }
+      .quick-reminder-form-group {
+        margin-bottom: 10px;
+      }
+      .quick-reminder-form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #4a4a4a;
+      }
+      body.dark-mode .quick-reminder-form-label {
+        color: #e0e0e0;
+      }
+      .quick-reminder-form-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #d4a5a5;
+        border-radius: 4px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+      }
+      body.dark-mode .quick-reminder-form-input {
+        background-color: #555;
+        border-color: #d4a5a5;
+        color: #e0e0e0;
+      }
+      .quick-reminder-form-input.error {
+        border-color: #ff6b6b;
+        background-color: #fff8f8;
+      }
+      body.dark-mode .quick-reminder-form-input.error {
+        background-color: #553333;
+        border-color: #ff6b6b;
+      }
+      .quick-reminder-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+      .quick-reminder-form-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .quick-reminder-form-cancel {
+        background-color: #f1f1f1;
+        color: #555;
+      }
+      body.dark-mode .quick-reminder-form-cancel {
+        background-color: #555;
+        color: #e0e0e0;
+      }
+      .quick-reminder-form-save {
+        background-color: #d4a5a5;
+        color: white;
+      }
+      .error-message {
+        color: #ff6b6b;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+      .error-message.show {
+        display: block;
+      }
+      /* Cute Notification Popup */
+      .cute-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #d4a5a5, #c19696);
+        color: white;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(166, 124, 124, 0.3);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        max-width: 350px;
+        transform: translateX(400px);
+        transition: transform 0.5s ease;
+        overflow: hidden;
+      }
+      .cute-notification.show {
+        transform: translateX(0);
+      }
+      .cute-notification-icon {
+        font-size: 36px;
+        margin-right: 15px;
+        animation: heartBeat 1.5s infinite;
+      }
+      @keyframes heartBeat {
+        0% {
+          transform: scale(1);
+        }
+        14% {
+          transform: scale(1.3);
+        }
+        28% {
+          transform: scale(1);
+        }
+        42% {
+          transform: scale(1.3);
+        }
+        70% {
+          transform: scale(1);
+        }
+      }
+      .cute-notification-content {
+        flex: 1;
+      }
+      .cute-notification-title {
+        font-family: "Parisienne", cursive;
+        font-size: 24px;
+        font-weight: 400;
+        margin-bottom: 5px;
+      }
+      .cute-notification-message {
+        font-family: "Montserrat", sans-serif;
+        font-size: 16px;
+      }
+      .cute-notification-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+        opacity: 0.7;
+        transition: opacity 0.3s;
+      }
+      .cute-notification-close:hover {
+        opacity: 1;
+      }
+      /* Print Styles */
+      @media print {
+        body {
+          background-color: white;
+          color: black;
+        }
+        .widget-container {
+          max-width: 100%;
+          box-shadow: none;
+          border: none;
+        }
+        .action-buttons,
+        .task-actions,
+        .dark-mode-toggle,
+        .search-container,
+        .filter-container,
+        .tab-nav,
+        .reminder-widget,
+        .cute-notification,
+        .add-task-form {
+          display: none !important;
+        }
+        .task-card {
+          break-inside: avoid;
+          box-shadow: none;
+          border: 1px solid #ddd;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        .subtitle {
+          font-size: 16px;
+        }
+        .task-footer {
+          display: none;
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 24px;
+        }
+        .subtitle {
+          font-size: 14px;
+        }
+        .tab-button {
+          padding: 5px 10px;
+          font-size: 11px;
+        }
+        .task-grid {
+          grid-template-columns: 1fr;
+        }
+        .action-btn {
+          padding: 8px 14px;
+          font-size: 13px;
+        }
+        .reminder-widget {
+          width: calc(100% - 40px);
+          left: 20px;
+          right: 20px;
+        }
+        .cute-notification {
+          max-width: calc(100% - 40px);
+          left: 20px;
+          right: 20px;
+        }
+        .add-task-form {
+          width: calc(100% - 40px);
+          left: 20px;
+          right: 20px;
+        }
+        .widget-container {
+          margin: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="widget-container">
+      <div class="widget-content">
+        <header>
+          <button class="dark-mode-toggle" id="darkModeToggle">
+            <i class="fas fa-moon"></i>
+          </button>
+          <h1>Wedding Planning</h1>
+          <p class="subtitle">Your journey to the perfect day</p>
+        </header>
+        <!-- Search Bar -->
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="Search tasks..."
+          />
+        </div>
+        <!-- Events Component -->
+        <div class="events-component" id="eventsComponent">
+          <div class="tab-nav" id="tabNav">
+            <!-- Tabs will be populated by JavaScript -->
+          </div>
+          <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">
+              All Tasks
+            </button>
+            <button class="filter-btn" data-filter="not-started">
+              Not Started
+            </button>
+            <button class="filter-btn" data-filter="in-progress">
+              In Progress
+            </button>
+            <button class="filter-btn" data-filter="completed">
+              Completed
+            </button>
+          </div>
+          <div id="tabContent">
+            <!-- Tab content will be populated by JavaScript -->
+          </div>
+        </div>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn" id="addTaskBtn">
+            <i class="fas fa-plus"></i> Add Task
+          </button>
+          <button class="action-btn" id="exportPdfBtn">
+            <i class="fas fa-file-pdf"></i> Export
+          </button>
+          <button class="action-btn" id="printBtn">
+            <i class="fas fa-print"></i> Print
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Task Form -->
+    <div class="add-task-form" id="addTaskForm">
+      <h3>Add New Task</h3>
+      <div class="add-task-form-group">
+        <label class="add-task-form-label" for="addTaskText">Task</label>
+        <input
+          type="text"
+          id="addTaskText"
+          class="add-task-form-input"
+          required
+        />
+        <div class="task-text-error" id="taskTextError">
+          Task text is required
+        </div>
+      </div>
+      <div class="add-task-form-group">
+        <label class="add-task-form-label" for="addTaskDueDate"
+          >Due Date (optional)</label
+        >
+        <input type="date" id="addTaskDueDate" class="add-task-form-input" />
+      </div>
+      <div class="add-task-form-group">
+        <label class="add-task-form-label" for="addTaskNotes"
+          >Notes (optional)</label
+        >
+        <textarea
+          id="addTaskNotes"
+          class="add-task-form-input"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="add-task-form-actions">
+        <button
+          class="add-task-form-btn add-task-form-cancel"
+          id="cancelAddTaskBtn"
+        >
+          Cancel
+        </button>
+        <button
+          class="add-task-form-btn add-task-form-save"
+          id="saveAddTaskBtn"
+        >
+          Add Task
+        </button>
+      </div>
+    </div>
+
+    <!-- Reminder Widget -->
+    <div class="reminder-widget collapsed" id="reminderWidget">
+      <div class="reminder-widget-header" id="reminderWidgetHeader">
+        <div class="reminder-widget-title">
+          <i class="fas fa-heart"></i> Reminders
+        </div>
+        <button class="reminder-widget-toggle" id="reminderWidgetToggle">
+          <i class="fas fa-chevron-up"></i>
+        </button>
+      </div>
+      <div class="reminder-widget-content">
+        <!-- Quick Reminder Form -->
+        <div
+          class="quick-reminder-form"
+          id="quickReminderForm"
+          style="display: none"
+        >
+          <div class="quick-reminder-form-group">
+            <label class="quick-reminder-form-label" for="quickReminderTask"
+              >Task</label
+            >
+            <input
+              type="text"
+              id="quickReminderTask"
+              class="quick-reminder-form-input"
+              readonly
+            />
+          </div>
+          <div class="quick-reminder-form-group">
+            <label class="quick-reminder-form-label" for="quickReminderDate"
+              >Date</label
+            >
+            <input
+              type="date"
+              id="quickReminderDate"
+              class="quick-reminder-form-input"
+            />
+            <div class="error-message" id="dateError">
+              Please select a future date
+            </div>
+          </div>
+          <div class="quick-reminder-form-group">
+            <label class="quick-reminder-form-label" for="quickReminderTime"
+              >Time</label
+            >
+            <input
+              type="time"
+              id="quickReminderTime"
+              class="quick-reminder-form-input"
+            />
+            <div class="error-message" id="timeError">Please select a time</div>
+          </div>
+          <div class="quick-reminder-form-group">
+            <label class="quick-reminder-form-label" for="quickReminderNote"
+              >Note (optional)</label
+            >
+            <input
+              type="text"
+              id="quickReminderNote"
+              class="quick-reminder-form-input"
+              placeholder="Add a note for your reminder"
+            />
+          </div>
+          <div class="quick-reminder-form-actions">
+            <button
+              class="quick-reminder-form-btn quick-reminder-form-cancel"
+              id="cancelQuickReminderBtn"
+            >
+              Cancel
+            </button>
+            <button
+              class="quick-reminder-form-btn quick-reminder-form-save"
+              id="saveQuickReminderBtn"
+            >
+              Set Reminder
+            </button>
+          </div>
+        </div>
+        <!-- Reminder List -->
+        <ul class="reminder-list" id="reminderList">
+          <li class="reminder-empty">No reminders set</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Cute Notification Popup -->
+    <div class="cute-notification" id="cuteNotification">
+      <div class="cute-notification-icon">
+        <i class="fas fa-heart"></i>
+      </div>
+      <div class="cute-notification-content">
+        <div class="cute-notification-title">Wedding Reminder!</div>
+        <div class="cute-notification-message" id="notificationMessage">
+          Don't forget your wedding task!
+        </div>
+      </div>
+      <button class="cute-notification-close" id="notificationClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <script>
+      // Wedding planning tasks data with additional fields
+      const weddingTasks = [
+        {
+          period: "1 Year Before",
+          icon: "fa-calendar",
+          tasks: [
+            {
+              id: 1,
+              text: "Set wedding budget",
+              status: "not-started",
+              dueDate: "",
+              notes:
+                "Determine overall budget and allocate funds to different categories",
+            },
+            {
+              id: 2,
+              text: "Choose wedding date",
+              status: "not-started",
+              dueDate: "",
+              notes:
+                "Consider venue availability, season, and personal significance",
+            },
+            {
+              id: 3,
+              text: "Book wedding venue",
+              status: "not-started",
+              dueDate: "",
+              notes: "Popular venues book up to 18 months in advance",
+            },
+            {
+              id: 4,
+              text: "Hire wedding planner",
+              status: "not-started",
+              dueDate: "",
+              notes: "Optional but recommended for complex weddings",
+            },
+            {
+              id: 5,
+              text: "Create guest list",
+              status: "not-started",
+              dueDate: "",
+              notes:
+                "Start with a rough list and refine as planning progresses",
+            },
+          ],
+        },
+        {
+          period: "10-11 Months Before",
+          icon: "fa-camera",
+          tasks: [
+            {
+              id: 6,
+              text: "Book photographer",
+              status: "not-started",
+              dueDate: "",
+              notes: "Review portfolios and check availability",
+            },
+            {
+              id: 7,
+              text: "Book videographer",
+              status: "not-started",
+              dueDate: "",
+              notes: "Consider if you want video coverage of your day",
+            },
+            {
+              id: 8,
+              text: "Book caterer",
+              status: "not-started",
+              dueDate: "",
+              notes: "Taste menus and discuss dietary restrictions",
+            },
+            {
+              id: 9,
+              text: "Order wedding invitations",
+              status: "not-started",
+              dueDate: "",
+              notes: "Order 6-8 months before the wedding",
+            },
+            {
+              id: 10,
+              text: "Choose wedding party",
+              status: "not-started",
+              dueDate: "",
+              notes: "Select bridesmaids, groomsmen, and other roles",
+            },
+          ],
+        },
+        {
+          period: "8-9 Months Before",
+          icon: "fa-user",
+          tasks: [
+            {
+              id: 11,
+              text: "Shop for wedding dress",
+              status: "not-started",
+              dueDate: "",
+              notes: "Allow 6-9 months for dress shopping and alterations",
+            },
+            {
+              id: 12,
+              text: "Select bridesmaid dresses",
+              status: "not-started",
+              dueDate: "",
+              notes: "Consider styles and colors that complement your dress",
+            },
+            {
+              id: 13,
+              text: "Book florist",
+              status: "not-started",
+              dueDate: "",
+              notes: "Discuss bouquet designs and floral arrangements",
+            },
+            {
+              id: 14,
+              text: "Book entertainment",
+              status: "not-started",
+              dueDate: "",
+              notes: "DJ, band, or other entertainment options",
+            },
+            {
+              id: 15,
+              text: "Reserve hotel room blocks",
+              status: "not-started",
+              dueDate: "",
+              notes: "For out-of-town guests",
+            },
+          ],
+        },
+        {
+          period: "6-7 Months Before",
+          icon: "fa-birthday-cake",
+          tasks: [
+            {
+              id: 16,
+              text: "Order wedding cake",
+              status: "not-started",
+              dueDate: "",
+              notes: "Schedule cake tasting and design consultation",
+            },
+            {
+              id: 17,
+              text: "Send save-the-dates",
+              status: "not-started",
+              dueDate: "",
+              notes: "Mail 6-8 months before the wedding",
+            },
+            {
+              id: 18,
+              text: "Plan honeymoon",
+              status: "not-started",
+              dueDate: "",
+              notes: "Book flights and accommodations",
+            },
+            {
+              id: 19,
+              text: "Register for gifts",
+              status: "not-started",
+              dueDate: "",
+              notes: "Create registries at multiple stores",
+            },
+            {
+              id: 20,
+              text: "Book transportation",
+              status: "not-started",
+              dueDate: "",
+              notes: "For wedding party and guests",
+            },
+          ],
+        },
+        {
+          period: "4-5 Months Before",
+          icon: "fa-utensils",
+          tasks: [
+            {
+              id: 21,
+              text: "Finalize menu with caterer",
+              status: "not-started",
+              dueDate: "",
+              notes: "Select appetizers, main courses, and desserts",
+            },
+            {
+              id: 22,
+              text: "Order wedding favors",
+              status: "not-started",
+              dueDate: "",
+              notes: "Personalized gifts for guests",
+            },
+            {
+              id: 23,
+              text: "Schedule dress fittings",
+              status: "not-started",
+              dueDate: "",
+              notes: "First fitting 3-4 months before wedding",
+            },
+            {
+              id: 24,
+              text: "Plan rehearsal dinner",
+              status: "not-started",
+              dueDate: "",
+              notes: "Book venue and create guest list",
+            },
+            {
+              id: 25,
+              text: "Apply for marriage license",
+              status: "not-started",
+              dueDate: "",
+              notes: "Check local requirements and timing",
+            },
+          ],
+        },
+        {
+          period: "2-3 Months Before",
+          icon: "fa-envelope",
+          tasks: [
+            {
+              id: 26,
+              text: "Send wedding invitations",
+              status: "not-started",
+              dueDate: "",
+              notes: "Mail 8-10 weeks before wedding",
+            },
+            {
+              id: 27,
+              text: "Finalize guest count",
+              status: "not-started",
+              dueDate: "",
+              notes: "Track RSVPs and provide final count to venue",
+            },
+            {
+              id: 28,
+              text: "Purchase wedding rings",
+              status: "not-started",
+              dueDate: "",
+              notes: "Allow time for resizing if needed",
+            },
+            {
+              id: 29,
+              text: "Plan ceremony details",
+              status: "not-started",
+              dueDate: "",
+              notes: "Readings, music, vows, and ceremony flow",
+            },
+            {
+              id: 30,
+              text: "Create wedding day timeline",
+              status: "not-started",
+              dueDate: "",
+              notes: "Detailed schedule for all wedding events",
+            },
+          ],
+        },
+        {
+          period: "1 Month Before",
+          icon: "fa-list-check",
+          tasks: [
+            {
+              id: 31,
+              text: "Confirm all vendors",
+              status: "not-started",
+              dueDate: "",
+              notes: "Finalize details and payment schedules",
+            },
+            {
+              id: 32,
+              text: "Final dress fitting",
+              status: "not-started",
+              dueDate: "",
+              notes: "Last alterations and perfect fit",
+            },
+            {
+              id: 33,
+              text: "Pick up wedding attire",
+              status: "not-started",
+              dueDate: "",
+              notes: "Dress, shoes, and accessories",
+            },
+            {
+              id: 34,
+              text: "Create seating chart",
+              status: "not-started",
+              dueDate: "",
+              notes: "Assign guests to tables",
+            },
+            {
+              id: 35,
+              text: "Prepare welcome bags",
+              status: "not-started",
+              dueDate: "",
+              notes: "For out-of-town guests",
+            },
+          ],
+        },
+        {
+          period: "1-2 Weeks Before",
+          icon: "fa-phone",
+          tasks: [
+            {
+              id: 36,
+              text: "Confirm final guest count",
+              status: "not-started",
+              dueDate: "",
+              notes: "Provide to caterer and venue",
+            },
+            {
+              id: 37,
+              text: "Finalize vendor payments",
+              status: "not-started",
+              dueDate: "",
+              notes: "Settle remaining balances",
+            },
+            {
+              id: 38,
+              text: "Delegate day-of tasks",
+              status: "not-started",
+              dueDate: "",
+              notes: "Assign responsibilities to wedding party",
+            },
+            {
+              id: 39,
+              text: "Prepare wedding day emergency kit",
+              status: "not-started",
+              dueDate: "",
+              notes: "Include safety pins, stain remover, etc.",
+            },
+            {
+              id: 40,
+              text: "Confirm honeymoon reservations",
+              status: "not-started",
+              dueDate: "",
+              notes: "Check flight times and hotel bookings",
+            },
+          ],
+        },
+        {
+          period: "The Week Before",
+          icon: "fa-calendar-week",
+          tasks: [
+            {
+              id: 41,
+              text: "Pick up marriage license",
+              status: "not-started",
+              dueDate: "",
+              notes: "Check expiration date",
+            },
+            {
+              id: 42,
+              text: "Give final headcount to caterer",
+              status: "not-started",
+              dueDate: "",
+              notes: "Include any last-minute changes",
+            },
+            {
+              id: 43,
+              text: "Confirm arrival times with vendors",
+              status: "not-started",
+              dueDate: "",
+              notes: "Create detailed schedule for vendors",
+            },
+            {
+              id: 44,
+              text: "Pack for honeymoon",
+              status: "not-started",
+              dueDate: "",
+              notes: "Don't forget travel documents",
+            },
+            {
+              id: 45,
+              text: "Relax and get plenty of rest",
+              status: "not-started",
+              dueDate: "",
+              notes: "Take time for self-care",
+            },
+          ],
+        },
+        {
+          period: "The Day Before",
+          icon: "fa-calendar-day",
+          tasks: [
+            {
+              id: 46,
+              text: "Attend rehearsal",
+              status: "not-started",
+              dueDate: "",
+              notes: "Practice ceremony processional",
+            },
+            {
+              id: 47,
+              text: "Host rehearsal dinner",
+              status: "not-started",
+              dueDate: "",
+              notes: "Enjoy time with wedding party and family",
+            },
+            {
+              id: 48,
+              text: "Give wedding party gifts",
+              status: "not-started",
+              dueDate: "",
+              notes: "Express appreciation to your wedding party",
+            },
+            {
+              id: 49,
+              text: "Confirm transportation details",
+              status: "not-started",
+              dueDate: "",
+              notes: "Verify pickup times and locations",
+            },
+            {
+              id: 50,
+              text: "Get a good night's sleep",
+              status: "not-started",
+              dueDate: "",
+              notes: "Important for feeling your best",
+            },
+          ],
+        },
+        {
+          period: "Wedding Day",
+          icon: "fa-heart",
+          tasks: [
+            {
+              id: 51,
+              text: "Have a healthy breakfast",
+              status: "not-started",
+              dueDate: "",
+              notes: "Don't skip the most important meal",
+            },
+            {
+              id: 52,
+              text: "Get hair and makeup done",
+              status: "not-started",
+              dueDate: "",
+              notes: "Allow plenty of time",
+            },
+            {
+              id: 53,
+              text: "Put on wedding attire",
+              status: "not-started",
+              dueDate: "",
+              notes: "With help from bridesmaids",
+            },
+            {
+              id: 54,
+              text: "Enjoy your special day",
+              status: "not-started",
+              dueDate: "",
+              notes: "Be present and savor every moment",
+            },
+            {
+              id: 55,
+              text: "Depart for honeymoon",
+              status: "not-started",
+              dueDate: "",
+              notes: "Have a wonderful trip",
+            },
+          ],
+        },
+      ];
+      // Current active tab and filter
+      let activeTab = 0;
+      let activeFilter = "all";
+      let editingTaskId = null;
+      let deletingTaskId = null;
+      let darkMode = false;
+      let searchTerm = "";
+      let currentReminderTask = null;
+      let reminders = [];
+      // Modal elements
+      const reminderWidget = document.getElementById("reminderWidget");
+      const reminderWidgetHeader = document.getElementById(
+        "reminderWidgetHeader"
+      );
+      const reminderWidgetToggle = document.getElementById(
+        "reminderWidgetToggle"
+      );
+      const reminderList = document.getElementById("reminderList");
+      const quickReminderForm = document.getElementById("quickReminderForm");
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      const searchInput = document.getElementById("searchInput");
+      const exportPdfBtn = document.getElementById("exportPdfBtn");
+      const printBtn = document.getElementById("printBtn");
+      const cancelQuickReminderBtn = document.getElementById(
+        "cancelQuickReminderBtn"
+      );
+      const saveQuickReminderBtn = document.getElementById(
+        "saveQuickReminderBtn"
+      );
+      const quickReminderTask = document.getElementById("quickReminderTask");
+      const quickReminderDate = document.getElementById("quickReminderDate");
+      const quickReminderTime = document.getElementById("quickReminderTime");
+      const quickReminderNote = document.getElementById("quickReminderNote");
+      const dateError = document.getElementById("dateError");
+      const timeError = document.getElementById("timeError");
+      const cuteNotification = document.getElementById("cuteNotification");
+      const notificationMessage = document.getElementById(
+        "notificationMessage"
+      );
+      const notificationClose = document.getElementById("notificationClose");
+
+      // Add Task Form Elements
+      const addTaskBtn = document.getElementById("addTaskBtn");
+      const addTaskForm = document.getElementById("addTaskForm");
+      const cancelAddTaskBtn = document.getElementById("cancelAddTaskBtn");
+      const saveAddTaskBtn = document.getElementById("saveAddTaskBtn");
+      const addTaskText = document.getElementById("addTaskText");
+      const addTaskDueDate = document.getElementById("addTaskDueDate");
+      const addTaskNotes = document.getElementById("addTaskNotes");
+      const taskTextError = document.getElementById("taskTextError");
+
+      // Events Component Functions
+      function renderTabs() {
+        const tabNav = document.getElementById("tabNav");
+        tabNav.innerHTML = "";
+        weddingTasks.forEach((period, index) => {
+          const tabButton = document.createElement("button");
+          tabButton.className = `tab-button ${
+            index === activeTab ? "active" : ""
+          }`;
+          tabButton.innerHTML = `<i class="fas ${period.icon} tab-icon"></i> ${period.period}`;
+          tabButton.addEventListener("click", () => {
+            activeTab = index;
+            renderTabs();
+            renderTabContent();
+          });
+          tabNav.appendChild(tabButton);
+        });
+      }
+      function renderTabContent() {
+        const tabContent = document.getElementById("tabContent");
+        tabContent.innerHTML = "";
+        const period = weddingTasks[activeTab];
+        // Apply search filter if there's a search term
+        let tasksToDisplay = period.tasks;
+        if (searchTerm) {
+          tasksToDisplay = period.tasks.filter(
+            (task) =>
+              task.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              (task.notes &&
+                task.notes.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+        // Apply status filter
+        const filteredTasks = tasksToDisplay.filter((task) => {
+          return activeFilter === "all" || task.status === activeFilter;
+        });
+        if (filteredTasks.length === 0) {
+          const emptyState = document.createElement("div");
+          emptyState.className = "empty-state";
+          emptyState.innerHTML = `
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No tasks found</h3>
+                    <p>Try changing your filter selection or search term</p>
+                `;
+          tabContent.appendChild(emptyState);
+          return;
+        }
+        const taskGrid = document.createElement("div");
+        taskGrid.className = "task-grid";
+        filteredTasks.forEach((task) => {
+          const taskCard = document.createElement("div");
+          taskCard.className = `task-card ${
+            task.status === "completed" ? "completed" : ""
+          }`;
+          taskCard.dataset.taskId = task.id;
+          const taskHeader = document.createElement("div");
+          taskHeader.className = "task-header";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.className = "task-checkbox";
+          checkbox.dataset.taskId = task.id;
+          checkbox.checked = task.status === "completed";
+          const taskContent = document.createElement("div");
+          taskContent.className = "task-content";
+          // Check if this task is being edited
+          if (editingTaskId === task.id) {
+            const editInput = document.createElement("input");
+            editInput.type = "text";
+            editInput.className = "task-edit-input";
+            editInput.value = task.text;
+            const dueDateInput = document.createElement("input");
+            dueDateInput.type = "date";
+            dueDateInput.className = "task-edit-input";
+            dueDateInput.value = task.dueDate;
+            const notesTextarea = document.createElement("textarea");
+            notesTextarea.className = "task-edit-input";
+            notesTextarea.rows = 3;
+            notesTextarea.placeholder = "Add notes...";
+            notesTextarea.value = task.notes || "";
+            const editActions = document.createElement("div");
+            editActions.className = "task-edit-actions";
+            const saveBtn = document.createElement("button");
+            saveBtn.className = "task-edit-btn task-edit-save";
+            saveBtn.textContent = "Save";
+            saveBtn.addEventListener("click", () => {
+              saveTaskEdit(
+                task.id,
+                editInput.value,
+                dueDateInput.value,
+                notesTextarea.value
+              );
+            });
+            const cancelBtn = document.createElement("button");
+            cancelBtn.className = "task-edit-btn task-edit-cancel";
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.addEventListener("click", () => {
+              cancelTaskEdit();
+            });
+            editActions.appendChild(saveBtn);
+            editActions.appendChild(cancelBtn);
+            taskContent.appendChild(editInput);
+            taskContent.appendChild(dueDateInput);
+            taskContent.appendChild(notesTextarea);
+            taskContent.appendChild(editActions);
+          } else {
+            // Task text
+            const taskText = document.createElement("div");
+            taskText.className = "task-text";
+            taskText.textContent = task.text;
+
+            // Task meta (status and due date)
+            const taskMeta = document.createElement("div");
+            taskMeta.className = "task-meta";
+
+            // Status badge
+            const taskStatus = document.createElement("span");
+            taskStatus.className = "task-status";
+            if (task.status === "completed") {
+              taskStatus.classList.add("status-completed");
+              taskStatus.textContent = "Completed";
+            } else if (task.status === "in-progress") {
+              taskStatus.classList.add("status-in-progress");
+              taskStatus.textContent = "In Progress";
+            } else {
+              taskStatus.classList.add("status-not-started");
+              taskStatus.textContent = "Not Started";
+            }
+
+            // Due date
+            const taskDueDate = document.createElement("div");
+            taskDueDate.className = "task-due-date";
+            if (task.dueDate) {
+              const date = new Date(task.dueDate);
+              const formattedDate = date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              });
+              taskDueDate.textContent = `Due: ${formattedDate}`;
+            }
+
+            // Add status and due date to meta
+            taskMeta.appendChild(taskStatus);
+            if (task.dueDate) {
+              taskMeta.appendChild(taskDueDate);
+            }
+
+            // Notes (if any)
+            const taskNotes = document.createElement("div");
+            taskNotes.className = "task-notes";
+            if (task.notes) {
+              taskNotes.textContent = task.notes;
+            }
+
+            // Add elements to content
+            taskContent.appendChild(taskText);
+            taskContent.appendChild(taskMeta);
+            if (task.notes) {
+              taskContent.appendChild(taskNotes);
+            }
+          }
+          taskHeader.appendChild(checkbox);
+          taskHeader.appendChild(taskContent);
+          const taskFooter = document.createElement("div");
+          taskFooter.className = "task-footer";
+          const taskActions = document.createElement("div");
+          taskActions.className = "task-actions";
+          const editAction = document.createElement("div");
+          editAction.className = "task-action";
+          editAction.innerHTML = '<i class="fas fa-edit"></i>';
+          editAction.title = "Edit Task";
+          editAction.addEventListener("click", () => {
+            startTaskEdit(task.id);
+          });
+          const reminderAction = document.createElement("div");
+          reminderAction.className = "task-action";
+          reminderAction.innerHTML = '<i class="fas fa-bell"></i>';
+          reminderAction.title = "Set Reminder";
+          reminderAction.addEventListener("click", () => {
+            openQuickReminderForm(task);
+          });
+          const deleteAction = document.createElement("div");
+          deleteAction.className = "task-action delete";
+          deleteAction.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteAction.title = "Delete Task";
+          deleteAction.addEventListener("click", () => {
+            deleteTask(task.id);
+          });
+          taskActions.appendChild(editAction);
+          taskActions.appendChild(reminderAction);
+          taskActions.appendChild(deleteAction);
+          taskFooter.appendChild(taskActions);
+          taskCard.appendChild(taskHeader);
+          taskCard.appendChild(taskFooter);
+          checkbox.addEventListener("change", function () {
+            updateTaskStatus(task.id, this.checked);
+          });
+          taskGrid.appendChild(taskCard);
+        });
+        tabContent.appendChild(taskGrid);
+      }
+      function updateTaskStatus(taskId, isCompleted) {
+        weddingTasks.forEach((period) => {
+          const task = period.tasks.find((t) => t.id === taskId);
+          if (task) {
+            task.status = isCompleted ? "completed" : "not-started";
+          }
+        });
+        renderTabContent();
+      }
+      function startTaskEdit(taskId) {
+        editingTaskId = taskId;
+        renderTabContent();
+      }
+      function saveTaskEdit(taskId, newText, newDueDate, newNotes) {
+        weddingTasks.forEach((period) => {
+          const task = period.tasks.find((t) => t.id === taskId);
+          if (task) {
+            task.text = newText;
+            task.dueDate = newDueDate;
+            task.notes = newNotes;
+          }
+        });
+        editingTaskId = null;
+        renderTabContent();
+      }
+      function cancelTaskEdit() {
+        editingTaskId = null;
+        renderTabContent();
+      }
+      function deleteTask(taskId) {
+        weddingTasks.forEach((period) => {
+          const taskIndex = period.tasks.findIndex((t) => t.id === taskId);
+          if (taskIndex !== -1) {
+            period.tasks.splice(taskIndex, 1);
+          }
+        });
+        renderTabContent();
+      }
+      // Dark Mode Functions
+      function toggleDarkMode() {
+        darkMode = !darkMode;
+        document.body.classList.toggle("dark-mode");
+        // Update icon
+        const icon = darkModeToggle.querySelector("i");
+        if (darkMode) {
+          icon.classList.remove("fa-moon");
+          icon.classList.add("fa-sun");
+        } else {
+          icon.classList.remove("fa-sun");
+          icon.classList.add("fa-moon");
+        }
+      }
+      // Search Function
+      function handleSearch() {
+        searchTerm = searchInput.value.trim();
+        renderTabContent();
+      }
+      // Export to PDF Function
+      function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        // Add title
+        doc.setFont("Parisienne", "normal");
+        doc.setFontSize(28);
+        doc.setTextColor(166, 124, 124);
+        doc.text("Wedding Planning Checklist", 105, 20, { align: "center" });
+        // Add subtitle
+        doc.setFont("Montserrat", "italic");
+        doc.setFontSize(18);
+        doc.setTextColor(166, 124, 124);
+        doc.text("Your journey to the perfect day", 105, 30, {
+          align: "center",
+        });
+        // Add tasks
+        let yPosition = 50;
+        weddingTasks.forEach((period) => {
+          doc.setFont("Montserrat", "bold");
+          doc.setFontSize(16);
+          doc.setTextColor(166, 124, 124);
+          doc.text(period.period, 20, yPosition);
+          yPosition += 10;
+          period.tasks.forEach((task) => {
+            doc.setFont("Montserrat", "normal");
+            doc.setFontSize(12);
+            // Set color based on status
+            if (task.status === "completed") {
+              doc.setTextColor(21, 87, 36);
+            } else if (task.status === "in-progress") {
+              doc.setTextColor(133, 100, 4);
+            } else {
+              doc.setTextColor(114, 28, 36);
+            }
+            // Add checkbox
+            doc.text(
+              task.status === "completed" ? "[✓]" : "[ ]",
+              25,
+              yPosition
+            );
+            // Add task text
+            doc.text(task.text, 35, yPosition);
+            yPosition += 8;
+            // Add notes if they exist
+            if (task.notes) {
+              doc.setFontSize(10);
+              doc.setTextColor(166, 124, 124);
+              doc.text(task.notes, 35, yPosition);
+              yPosition += 6;
+              doc.setFontSize(12);
+            }
+            // Add new page if needed
+            if (yPosition > 270) {
+              doc.addPage();
+              yPosition = 20;
+            }
+          });
+          yPosition += 10;
+        });
+        // Save the PDF
+        doc.save("wedding-planning-checklist.pdf");
+      }
+      // Print Function
+      function printChecklist() {
+        window.print();
+      }
+
+      // Reminder Widget Functions
+      function toggleReminderWidget() {
+        if (reminderWidget.classList.contains("collapsed")) {
+          reminderWidget.classList.remove("collapsed");
+          reminderWidget.classList.add("expanded");
+        } else {
+          reminderWidget.classList.remove("expanded");
+          reminderWidget.classList.add("collapsed");
+        }
+      }
+      function openQuickReminderForm(task) {
+        currentReminderTask = task;
+        quickReminderTask.value = task.text;
+        // Set default date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        quickReminderDate.value = tomorrow.toISOString().split("T")[0];
+        // Set default time to 9:00 AM
+        quickReminderTime.value = "09:00";
+        // Clear note
+        quickReminderNote.value = "";
+        // Clear any previous errors
+        clearErrors();
+        // Show the form
+        quickReminderForm.style.display = "block";
+        // Expand widget if collapsed
+        if (reminderWidget.classList.contains("collapsed")) {
+          toggleReminderWidget();
+        }
+      }
+      function closeQuickReminderForm() {
+        quickReminderForm.style.display = "none";
+        currentReminderTask = null;
+        clearErrors();
+      }
+      function clearErrors() {
+        // Hide error messages
+        dateError.classList.remove("show");
+        timeError.classList.remove("show");
+        // Remove error styling from inputs
+        quickReminderDate.classList.remove("error");
+        quickReminderTime.classList.remove("error");
+      }
+      function showError(inputElement, errorElement) {
+        inputElement.classList.add("error");
+        errorElement.classList.add("show");
+      }
+
+      // Function to play a pleasant chime sound instead of wedding bell
+      function playChimeSound() {
+        // Create a new audio context
+        const audioContext = new (window.AudioContext ||
+          window.webkitAudioContext)();
+
+        // Create oscillators for a more pleasant chime sound
+        const oscillator1 = audioContext.createOscillator();
+        const oscillator2 = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        // Configure oscillators for a chime-like sound
+        oscillator1.type = "sine";
+        oscillator1.frequency.setValueAtTime(1046.5, audioContext.currentTime); // C6
+        oscillator1.frequency.exponentialRampToValueAtTime(
+          523.25,
+          audioContext.currentTime + 1
+        ); // C5
+
+        oscillator2.type = "triangle";
+        oscillator2.frequency.setValueAtTime(1318.51, audioContext.currentTime); // E6
+        oscillator2.frequency.exponentialRampToValueAtTime(
+          659.25,
+          audioContext.currentTime + 1
+        ); // E5
+
+        // Configure gain for a gentle fade
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioContext.currentTime + 2
+        );
+
+        // Connect nodes
+        oscillator1.connect(gainNode);
+        oscillator2.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Start and stop oscillators
+        oscillator1.start();
+        oscillator2.start();
+
+        // Create a gentle fade-out
+        setTimeout(() => {
+          oscillator1.stop();
+          oscillator2.stop();
+        }, 2000);
+      }
+
+      // Function to show cute notification
+      function showCuteNotification(message) {
+        notificationMessage.textContent = message;
+        cuteNotification.classList.add("show");
+        // Auto hide after 10 seconds
+        setTimeout(() => {
+          hideCuteNotification();
+        }, 10000);
+      }
+      // Function to hide cute notification
+      function hideCuteNotification() {
+        cuteNotification.classList.remove("show");
+      }
+
+      // Function to show the add task form
+      function showAddTaskForm() {
+        addTaskForm.style.display = "block";
+        // Clear any previous errors
+        taskTextError.classList.remove("show");
+        addTaskText.classList.remove("error");
+        // Clear form fields
+        addTaskText.value = "";
+        addTaskDueDate.value = "";
+        addTaskNotes.value = "";
+      }
+
+      // Function to hide the add task form
+      function hideAddTaskForm() {
+        addTaskForm.style.display = "none";
+      }
+
+      // Function to save the new task
+      function saveNewTask() {
+        // Clear previous errors
+        taskTextError.classList.remove("show");
+        addTaskText.classList.remove("error");
+
+        // Validate task text
+        if (!addTaskText.value.trim()) {
+          taskTextError.classList.add("show");
+          addTaskText.classList.add("error");
+          return;
+        }
+
+        // Create a new task object with the same structure as existing tasks
+        const newTask = {
+          id: Date.now(), // Use timestamp as a unique ID
+          text: addTaskText.value.trim(),
+          status: "not-started",
+          dueDate: addTaskDueDate.value || "", // Ensure it's a string, not undefined
+          notes: addTaskNotes.value.trim() || "", // Ensure it's a string, not undefined
+        };
+
+        // Add the task to the current active period
+        weddingTasks[activeTab].tasks.push(newTask);
+
+        // Re-render the tab content
+        renderTabContent();
+
+        // Hide the form
+        hideAddTaskForm();
+      }
+
+      function saveQuickReminder() {
+        if (!currentReminderTask) return;
+        const date = quickReminderDate.value;
+        const time = quickReminderTime.value;
+        const note = quickReminderNote.value;
+        // Clear previous errors
+        clearErrors();
+        let hasError = false;
+        // Validate date
+        if (!date) {
+          showError(quickReminderDate, dateError);
+          hasError = true;
+        }
+        // Validate time
+        if (!time) {
+          showError(quickReminderTime, timeError);
+          hasError = true;
+        }
+        // Check if date is in the future
+        if (date && time) {
+          const reminderDateTime = new Date(`${date}T${time}`);
+          if (reminderDateTime <= new Date()) {
+            showError(quickReminderDate, dateError);
+            hasError = true;
+          }
+        }
+        // If there are errors, don't save the reminder
+        if (hasError) {
+          return;
+        }
+        // Create a Date object for the reminder
+        const reminderDateTime = new Date(`${date}T${time}`);
+        // Calculate the time until the reminder
+        const timeUntilReminder = reminderDateTime.getTime() - Date.now();
+        // Store the reminder
+        const reminder = {
+          id: Date.now(),
+          taskId: currentReminderTask.id,
+          taskText: currentReminderTask.text,
+          date: date,
+          time: time,
+          note: note,
+          timeoutId: null,
+        };
+        // Set a timeout for the reminder
+        reminder.timeoutId = setTimeout(() => {
+          // Play chime sound instead of wedding bell
+          playChimeSound();
+          // Show cute notification
+          showCuteNotification(`Don't forget: ${currentReminderTask.text}`);
+          // Highlight the reminder in the widget
+          const reminderItem = reminderList.querySelector(
+            `[data-reminder-id="${reminder.id}"]`
+          );
+          if (reminderItem) {
+            reminderItem.classList.add("active");
+            // Auto-remove the active class after 10 seconds
+            setTimeout(() => {
+              reminderItem.classList.remove("active");
+            }, 10000);
+          }
+          // Expand widget if collapsed
+          if (reminderWidget.classList.contains("collapsed")) {
+            toggleReminderWidget();
+          }
+        }, timeUntilReminder);
+        // Add to reminders array
+        reminders.push(reminder);
+        // Add to widget
+        addReminderToWidget(reminder);
+        // Save to localStorage
+        saveReminders();
+        // Close form
+        closeQuickReminderForm();
+      }
+      function addReminderToWidget(reminder) {
+        // Remove empty state if it exists
+        const emptyState = reminderList.querySelector(".reminder-empty");
+        if (emptyState) {
+          emptyState.remove();
+        }
+        // Create reminder item
+        const reminderItem = document.createElement("li");
+        reminderItem.className = "reminder-item";
+        reminderItem.dataset.reminderId = reminder.id;
+        // Format date and time
+        const dateObj = new Date(`${reminder.date}T${reminder.time}`);
+        const formattedDate = dateObj.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+        const formattedTime = dateObj.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        // Create reminder content
+        reminderItem.innerHTML = `
+                <div class="reminder-task">${reminder.taskText}</div>
+                <div class="reminder-datetime">${formattedDate} at ${formattedTime}</div>
+                ${
+                  reminder.note
+                    ? `<div class="reminder-note">${reminder.note}</div>`
+                    : ""
+                }
+                <div class="reminder-actions">
+                    <button class="reminder-delete" data-reminder-id="${
+                      reminder.id
+                    }">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </div>
+            `;
+        // Add delete functionality
+        const deleteBtn = reminderItem.querySelector(".reminder-delete");
+        deleteBtn.addEventListener("click", () => {
+          removeReminderFromWidget(reminder.id);
+        });
+        // Add to list
+        reminderList.appendChild(reminderItem);
+      }
+      function removeReminderFromWidget(reminderId) {
+        // Find and remove from array
+        const reminderIndex = reminders.findIndex((r) => r.id === reminderId);
+        if (reminderIndex !== -1) {
+          // Clear timeout if it exists
+          if (reminders[reminderIndex].timeoutId) {
+            clearTimeout(reminders[reminderIndex].timeoutId);
+          }
+          // Remove from array
+          reminders.splice(reminderIndex, 1);
+        }
+        // Find and remove from DOM
+        const reminderItem = reminderList.querySelector(
+          `[data-reminder-id="${reminderId}"]`
+        );
+        if (reminderItem) {
+          reminderItem.remove();
+        }
+        // Show empty state if no reminders
+        if (reminders.length === 0) {
+          reminderList.innerHTML =
+            '<li class="reminder-empty">No reminders set</li>';
+        }
+        // Save to localStorage
+        saveReminders();
+      }
+      function renderReminderWidget() {
+        // Clear current list
+        reminderList.innerHTML = "";
+        if (reminders.length === 0) {
+          reminderList.innerHTML =
+            '<li class="reminder-empty">No reminders set</li>';
+        } else {
+          reminders.forEach((reminder) => {
+            addReminderToWidget(reminder);
+          });
+        }
+      }
+      // Save reminders to localStorage
+      function saveReminders() {
+        // Create a copy of reminders without timeoutIds (since they can't be serialized)
+        const remindersToSave = reminders.map((r) => ({
+          id: r.id,
+          taskId: r.taskId,
+          taskText: r.taskText,
+          date: r.date,
+          time: r.time,
+          note: r.note,
+        }));
+        localStorage.setItem(
+          "weddingReminders",
+          JSON.stringify(remindersToSave)
+        );
+      }
+      // Load reminders from localStorage
+      function loadReminders() {
+        const savedReminders = localStorage.getItem("weddingReminders");
+        if (savedReminders) {
+          try {
+            const parsedReminders = JSON.parse(savedReminders);
+            // Clear existing timeouts
+            reminders.forEach((r) => {
+              if (r.timeoutId) {
+                clearTimeout(r.timeoutId);
+              }
+            });
+            // Reset reminders array
+            reminders = [];
+            // Add saved reminders and set timeouts
+            const now = Date.now();
+            parsedReminders.forEach((r) => {
+              const reminderDateTime = new Date(`${r.date}T${r.time}`);
+              const timeUntilReminder = reminderDateTime.getTime() - now;
+              if (timeUntilReminder > 0) {
+                r.timeoutId = setTimeout(() => {
+                  // Play chime sound instead of wedding bell
+                  playChimeSound();
+                  // Show cute notification
+                  showCuteNotification(`Don't forget: ${r.taskText}`);
+                  // Highlight the reminder in the widget
+                  const reminderItem = reminderList.querySelector(
+                    `[data-reminder-id="${r.id}"]`
+                  );
+                  if (reminderItem) {
+                    reminderItem.classList.add("active");
+                    // Auto-remove the active class after 10 seconds
+                    setTimeout(() => {
+                      reminderItem.classList.remove("active");
+                    }, 10000);
+                  }
+                  // Expand widget if collapsed
+                  if (reminderWidget.classList.contains("collapsed")) {
+                    toggleReminderWidget();
+                  }
+                }, timeUntilReminder);
+                reminders.push(r);
+              }
+            });
+            // Render the widget
+            renderReminderWidget();
+          } catch (e) {
+            console.error("Failed to load reminders:", e);
+          }
+        }
+      }
+      // Initialize the page
+      document.addEventListener("DOMContentLoaded", () => {
+        // Load saved reminders
+        loadReminders();
+        renderTabs();
+        renderTabContent();
+        renderReminderWidget();
+        // Filter button functionality
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        filterButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            // Remove active class from all buttons
+            filterButtons.forEach((btn) => btn.classList.remove("active"));
+            // Add active class to clicked button
+            button.classList.add("active");
+            // Update active filter
+            activeFilter = button.dataset.filter;
+            // Re-render tab content
+            renderTabContent();
+          });
+        });
+        // Dark mode toggle
+        darkModeToggle.addEventListener("click", toggleDarkMode);
+        // Search functionality
+        searchInput.addEventListener("input", handleSearch);
+        // Export to PDF
+        exportPdfBtn.addEventListener("click", exportToPDF);
+        // Print functionality
+        printBtn.addEventListener("click", printChecklist);
+
+        // Add Task functionality
+        addTaskBtn.addEventListener("click", showAddTaskForm);
+        cancelAddTaskBtn.addEventListener("click", hideAddTaskForm);
+        saveAddTaskBtn.addEventListener("click", saveNewTask);
+
+        // Reminder widget functionality
+        reminderWidgetHeader.addEventListener("click", toggleReminderWidget);
+        cancelQuickReminderBtn.addEventListener(
+          "click",
+          closeQuickReminderForm
+        );
+        saveQuickReminderBtn.addEventListener("click", saveQuickReminder);
+        // Notification close functionality
+        notificationClose.addEventListener("click", hideCuteNotification);
+        // Clear errors when user starts typing in date or time fields
+        quickReminderDate.addEventListener("input", () => {
+          if (dateError.classList.contains("show")) {
+            dateError.classList.remove("show");
+            quickReminderDate.classList.remove("error");
+          }
+        });
+        quickReminderTime.addEventListener("input", () => {
+          if (timeError.classList.contains("show")) {
+            timeError.classList.remove("show");
+            quickReminderTime.classList.remove("error");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
