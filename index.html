@@ -29,7 +29,6 @@
       body.dark-mode {
         color: #e0e0e0;
       }
-      
       /* Widget Container */
       .widget-container {
         width: 100%;
@@ -45,12 +44,10 @@
         background-color: #2d2d2d;
         border-color: #444;
       }
-      
       /* Widget Content */
       .widget-content {
         padding: 15px;
       }
-      
       /* Original styles with adjustments */
       header {
         text-align: center;
@@ -543,12 +540,10 @@
         border: 2px solid #d4a5a5;
         display: none;
       }
-      
       body.dark-mode .add-task-form {
         background-color: #3a3a3a;
         border-color: #d4a5a5;
       }
-      
       .add-task-form h3 {
         font-family: "Parisienne", cursive;
         font-size: 24px;
@@ -556,15 +551,12 @@
         margin-bottom: 15px;
         text-align: center;
       }
-      
       body.dark-mode .add-task-form h3 {
         color: #d4a5a5;
       }
-      
       .add-task-form-group {
         margin-bottom: 15px;
       }
-      
       .add-task-form-label {
         display: block;
         margin-bottom: 5px;
@@ -572,11 +564,9 @@
         font-weight: 500;
         color: #4a4a4a;
       }
-      
       body.dark-mode .add-task-form-label {
         color: #e0e0e0;
       }
-      
       .add-task-form-input {
         width: 100%;
         padding: 8px;
@@ -585,30 +575,25 @@
         font-family: "Montserrat", sans-serif;
         font-size: 14px;
       }
-      
       body.dark-mode .add-task-form-input {
         background-color: #444;
         border-color: #d4a5a5;
         color: #e0e0e0;
       }
-      
       .add-task-form-input.error {
         border-color: #ff6b6b;
         background-color: #fff8f8;
       }
-      
       body.dark-mode .add-task-form-input.error {
         background-color: #553333;
         border-color: #ff6b6b;
       }
-      
       .add-task-form-actions {
         display: flex;
         justify-content: flex-end;
         gap: 10px;
         margin-top: 20px;
       }
-      
       .add-task-form-btn {
         padding: 8px 16px;
         border: none;
@@ -618,33 +603,27 @@
         cursor: pointer;
         transition: all 0.3s;
       }
-      
       .add-task-form-cancel {
         background-color: #f1f1f1;
         color: #555;
       }
-      
       body.dark-mode .add-task-form-cancel {
         background-color: #555;
         color: #e0e0e0;
       }
-      
       .add-task-form-save {
         background-color: #d4a5a5;
         color: white;
       }
-      
       .task-text-error {
         color: #ff6b6b;
         font-size: 12px;
         margin-top: 5px;
         display: none;
       }
-      
       .task-text-error.show {
         display: block;
       }
-      
       /* Reminder Widget */
       .reminder-widget {
         position: fixed;
@@ -1073,14 +1052,18 @@
             <!-- Tabs will be populated by JavaScript -->
           </div>
           <div class="filter-container">
-            <button class="filter-btn active" data-filter="all">All Tasks</button>
+            <button class="filter-btn active" data-filter="all">
+              All Tasks
+            </button>
             <button class="filter-btn" data-filter="not-started">
               Not Started
             </button>
             <button class="filter-btn" data-filter="in-progress">
               In Progress
             </button>
-            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn" data-filter="completed">
+              Completed
+            </button>
           </div>
           <div id="tabContent">
             <!-- Tab content will be populated by JavaScript -->
@@ -1100,29 +1083,52 @@
         </div>
       </div>
     </div>
-    
     <!-- Add Task Form -->
     <div class="add-task-form" id="addTaskForm">
       <h3>Add New Task</h3>
       <div class="add-task-form-group">
         <label class="add-task-form-label" for="addTaskText">Task</label>
-        <input type="text" id="addTaskText" class="add-task-form-input" required>
-        <div class="task-text-error" id="taskTextError">Task text is required</div>
+        <input
+          type="text"
+          id="addTaskText"
+          class="add-task-form-input"
+          required
+        />
+        <div class="task-text-error" id="taskTextError">
+          Task text is required
+        </div>
       </div>
       <div class="add-task-form-group">
-        <label class="add-task-form-label" for="addTaskDueDate">Due Date (optional)</label>
-        <input type="date" id="addTaskDueDate" class="add-task-form-input">
+        <label class="add-task-form-label" for="addTaskDueDate"
+          >Due Date (optional)</label
+        >
+        <input type="date" id="addTaskDueDate" class="add-task-form-input" />
       </div>
       <div class="add-task-form-group">
-        <label class="add-task-form-label" for="addTaskNotes">Notes (optional)</label>
-        <textarea id="addTaskNotes" class="add-task-form-input" rows="3"></textarea>
+        <label class="add-task-form-label" for="addTaskNotes"
+          >Notes (optional)</label
+        >
+        <textarea
+          id="addTaskNotes"
+          class="add-task-form-input"
+          rows="3"
+        ></textarea>
       </div>
       <div class="add-task-form-actions">
-        <button class="add-task-form-btn add-task-form-cancel" id="cancelAddTaskBtn">Cancel</button>
-        <button class="add-task-form-btn add-task-form-save" id="saveAddTaskBtn">Add Task</button>
+        <button
+          class="add-task-form-btn add-task-form-cancel"
+          id="cancelAddTaskBtn"
+        >
+          Cancel
+        </button>
+        <button
+          class="add-task-form-btn add-task-form-save"
+          id="saveAddTaskBtn"
+        >
+          Add Task
+        </button>
       </div>
     </div>
-    
     <!-- Reminder Widget -->
     <div class="reminder-widget collapsed" id="reminderWidget">
       <div class="reminder-widget-header" id="reminderWidgetHeader">
@@ -1224,7 +1230,7 @@
     </div>
     <script>
       // Wedding planning tasks data with additional fields
-      const weddingTasks = [
+      const defaultWeddingTasks = [
         {
           period: "1 Year Before",
           icon: "fa-calendar",
@@ -1680,6 +1686,10 @@
           ],
         },
       ];
+
+      // Initialize weddingTasks from localStorage or use default data
+      let weddingTasks = [...defaultWeddingTasks];
+
       // Current active tab and filter
       let activeTab = 0;
       let activeFilter = "all";
@@ -1689,6 +1699,7 @@
       let searchTerm = "";
       let currentReminderTask = null;
       let reminders = [];
+
       // Modal elements
       const reminderWidget = document.getElementById("reminderWidget");
       const reminderWidgetHeader = document.getElementById(
@@ -1720,17 +1731,40 @@
         "notificationMessage"
       );
       const notificationClose = document.getElementById("notificationClose");
-      
+
       // Add Task Form Elements
-      const addTaskBtn = document.getElementById('addTaskBtn');
-      const addTaskForm = document.getElementById('addTaskForm');
-      const cancelAddTaskBtn = document.getElementById('cancelAddTaskBtn');
-      const saveAddTaskBtn = document.getElementById('saveAddTaskBtn');
-      const addTaskText = document.getElementById('addTaskText');
-      const addTaskDueDate = document.getElementById('addTaskDueDate');
-      const addTaskNotes = document.getElementById('addTaskNotes');
-      const taskTextError = document.getElementById('taskTextError');
-      
+      const addTaskBtn = document.getElementById("addTaskBtn");
+      const addTaskForm = document.getElementById("addTaskForm");
+      const cancelAddTaskBtn = document.getElementById("cancelAddTaskBtn");
+      const saveAddTaskBtn = document.getElementById("saveAddTaskBtn");
+      const addTaskText = document.getElementById("addTaskText");
+      const addTaskDueDate = document.getElementById("addTaskDueDate");
+      const addTaskNotes = document.getElementById("addTaskNotes");
+      const taskTextError = document.getElementById("taskTextError");
+
+      // Save wedding tasks to localStorage
+      function saveWeddingTasks() {
+        try {
+          localStorage.setItem("weddingTasks", JSON.stringify(weddingTasks));
+        } catch (error) {
+          console.error("Error saving wedding tasks:", error);
+        }
+      }
+
+      // Load wedding tasks from localStorage
+      function loadWeddingTasks() {
+        try {
+          const savedTasks = localStorage.getItem("weddingTasks");
+          if (savedTasks) {
+            weddingTasks = JSON.parse(savedTasks);
+            return true;
+          }
+        } catch (error) {
+          console.error("Error loading wedding tasks:", error);
+        }
+        return false;
+      }
+
       // Events Component Functions
       function renderTabs() {
         const tabNav = document.getElementById("tabNav");
@@ -1749,6 +1783,7 @@
           tabNav.appendChild(tabButton);
         });
       }
+
       function renderTabContent() {
         const tabContent = document.getElementById("tabContent");
         tabContent.innerHTML = "";
@@ -1840,11 +1875,9 @@
             const taskText = document.createElement("div");
             taskText.className = "task-text";
             taskText.textContent = task.text;
-            
             // Task meta (status and due date)
             const taskMeta = document.createElement("div");
             taskMeta.className = "task-meta";
-            
             // Status badge
             const taskStatus = document.createElement("span");
             taskStatus.className = "task-status";
@@ -1858,7 +1891,6 @@
               taskStatus.classList.add("status-not-started");
               taskStatus.textContent = "Not Started";
             }
-            
             // Due date
             const taskDueDate = document.createElement("div");
             taskDueDate.className = "task-due-date";
@@ -1871,20 +1903,17 @@
               });
               taskDueDate.textContent = `Due: ${formattedDate}`;
             }
-            
             // Add status and due date to meta
             taskMeta.appendChild(taskStatus);
             if (task.dueDate) {
               taskMeta.appendChild(taskDueDate);
             }
-            
             // Notes (if any)
             const taskNotes = document.createElement("div");
             taskNotes.className = "task-notes";
             if (task.notes) {
               taskNotes.textContent = task.notes;
             }
-            
             // Add elements to content
             taskContent.appendChild(taskText);
             taskContent.appendChild(taskMeta);
@@ -1932,6 +1961,7 @@
         });
         tabContent.appendChild(taskGrid);
       }
+
       function updateTaskStatus(taskId, isCompleted) {
         weddingTasks.forEach((period) => {
           const task = period.tasks.find((t) => t.id === taskId);
@@ -1939,12 +1969,15 @@
             task.status = isCompleted ? "completed" : "not-started";
           }
         });
+        saveWeddingTasks(); // Save to localStorage
         renderTabContent();
       }
+
       function startTaskEdit(taskId) {
         editingTaskId = taskId;
         renderTabContent();
       }
+
       function saveTaskEdit(taskId, newText, newDueDate, newNotes) {
         weddingTasks.forEach((period) => {
           const task = period.tasks.find((t) => t.id === taskId);
@@ -1954,13 +1987,16 @@
             task.notes = newNotes;
           }
         });
+        saveWeddingTasks(); // Save to localStorage
         editingTaskId = null;
         renderTabContent();
       }
+
       function cancelTaskEdit() {
         editingTaskId = null;
         renderTabContent();
       }
+
       function deleteTask(taskId) {
         weddingTasks.forEach((period) => {
           const taskIndex = period.tasks.findIndex((t) => t.id === taskId);
@@ -1968,8 +2004,10 @@
             period.tasks.splice(taskIndex, 1);
           }
         });
+        saveWeddingTasks(); // Save to localStorage
         renderTabContent();
       }
+
       // Dark Mode Functions
       function toggleDarkMode() {
         darkMode = !darkMode;
@@ -1983,12 +2021,16 @@
           icon.classList.remove("fa-sun");
           icon.classList.add("fa-moon");
         }
+        // Save dark mode preference
+        localStorage.setItem("weddingDarkMode", darkMode);
       }
+
       // Search Function
       function handleSearch() {
         searchTerm = searchInput.value.trim();
         renderTabContent();
       }
+
       // Export to PDF Function
       function exportToPDF() {
         const { jsPDF } = window.jspdf;
@@ -2052,11 +2094,12 @@
         // Save the PDF
         doc.save("wedding-planning-checklist.pdf");
       }
+
       // Print Function
       function printChecklist() {
         window.print();
       }
-      
+
       // Reminder Widget Functions
       function toggleReminderWidget() {
         if (reminderWidget.classList.contains("collapsed")) {
@@ -2067,6 +2110,7 @@
           reminderWidget.classList.add("collapsed");
         }
       }
+
       function openQuickReminderForm(task) {
         currentReminderTask = task;
         quickReminderTask.value = task.text;
@@ -2087,11 +2131,13 @@
           toggleReminderWidget();
         }
       }
+
       function closeQuickReminderForm() {
         quickReminderForm.style.display = "none";
         currentReminderTask = null;
         clearErrors();
       }
+
       function clearErrors() {
         // Hide error messages
         dateError.classList.remove("show");
@@ -2100,50 +2146,54 @@
         quickReminderDate.classList.remove("error");
         quickReminderTime.classList.remove("error");
       }
+
       function showError(inputElement, errorElement) {
         inputElement.classList.add("error");
         errorElement.classList.add("show");
       }
-      
+
       // Function to play a pleasant chime sound instead of wedding bell
       function playChimeSound() {
         // Create a new audio context
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
+        const audioContext = new (window.AudioContext ||
+          window.webkitAudioContext)();
         // Create oscillators for a more pleasant chime sound
         const oscillator1 = audioContext.createOscillator();
         const oscillator2 = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        
         // Configure oscillators for a chime-like sound
         oscillator1.type = "sine";
-        oscillator1.frequency.setValueAtTime(1046.50, audioContext.currentTime); // C6
-        oscillator1.frequency.exponentialRampToValueAtTime(523.25, audioContext.currentTime + 1); // C5
-        
+        oscillator1.frequency.setValueAtTime(1046.5, audioContext.currentTime); // C6
+        oscillator1.frequency.exponentialRampToValueAtTime(
+          523.25,
+          audioContext.currentTime + 1
+        ); // C5
         oscillator2.type = "triangle";
         oscillator2.frequency.setValueAtTime(1318.51, audioContext.currentTime); // E6
-        oscillator2.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 1); // E5
-        
+        oscillator2.frequency.exponentialRampToValueAtTime(
+          659.25,
+          audioContext.currentTime + 1
+        ); // E5
         // Configure gain for a gentle fade
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
-        
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioContext.currentTime + 2
+        );
         // Connect nodes
         oscillator1.connect(gainNode);
         oscillator2.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        
         // Start and stop oscillators
         oscillator1.start();
         oscillator2.start();
-        
         // Create a gentle fade-out
         setTimeout(() => {
           oscillator1.stop();
           oscillator2.stop();
         }, 2000);
       }
-      
+
       // Function to show cute notification
       function showCuteNotification(message) {
         notificationMessage.textContent = message;
@@ -2153,60 +2203,58 @@
           hideCuteNotification();
         }, 10000);
       }
+
       // Function to hide cute notification
       function hideCuteNotification() {
         cuteNotification.classList.remove("show");
       }
-      
+
       // Function to show the add task form
       function showAddTaskForm() {
-        addTaskForm.style.display = 'block';
+        addTaskForm.style.display = "block";
         // Clear any previous errors
-        taskTextError.classList.remove('show');
-        addTaskText.classList.remove('error');
+        taskTextError.classList.remove("show");
+        addTaskText.classList.remove("error");
         // Clear form fields
-        addTaskText.value = '';
-        addTaskDueDate.value = '';
-        addTaskNotes.value = '';
+        addTaskText.value = "";
+        addTaskDueDate.value = "";
+        addTaskNotes.value = "";
       }
-      
+
       // Function to hide the add task form
       function hideAddTaskForm() {
-        addTaskForm.style.display = 'none';
+        addTaskForm.style.display = "none";
       }
-      
+
       // Function to save the new task
       function saveNewTask() {
         // Clear previous errors
-        taskTextError.classList.remove('show');
-        addTaskText.classList.remove('error');
-        
+        taskTextError.classList.remove("show");
+        addTaskText.classList.remove("error");
         // Validate task text
         if (!addTaskText.value.trim()) {
-          taskTextError.classList.add('show');
-          addTaskText.classList.add('error');
+          taskTextError.classList.add("show");
+          addTaskText.classList.add("error");
           return;
         }
-        
         // Create a new task object with the same structure as existing tasks
         const newTask = {
           id: Date.now(), // Use timestamp as a unique ID
           text: addTaskText.value.trim(),
-          status: 'not-started',
-          dueDate: addTaskDueDate.value || '', // Ensure it's a string, not undefined
-          notes: addTaskNotes.value.trim() || '' // Ensure it's a string, not undefined
+          status: "not-started",
+          dueDate: addTaskDueDate.value || "", // Ensure it's a string, not undefined
+          notes: addTaskNotes.value.trim() || "", // Ensure it's a string, not undefined
         };
-        
         // Add the task to the current active period
         weddingTasks[activeTab].tasks.push(newTask);
-        
+        // Save to localStorage
+        saveWeddingTasks();
         // Re-render the tab content
         renderTabContent();
-        
         // Hide the form
         hideAddTaskForm();
       }
-      
+
       function saveQuickReminder() {
         if (!currentReminderTask) return;
         const date = quickReminderDate.value;
@@ -2282,6 +2330,7 @@
         // Close form
         closeQuickReminderForm();
       }
+
       function addReminderToWidget(reminder) {
         // Remove empty state if it exists
         const emptyState = reminderList.querySelector(".reminder-empty");
@@ -2328,6 +2377,7 @@
         // Add to list
         reminderList.appendChild(reminderItem);
       }
+
       function removeReminderFromWidget(reminderId) {
         // Find and remove from array
         const reminderIndex = reminders.findIndex((r) => r.id === reminderId);
@@ -2354,6 +2404,7 @@
         // Save to localStorage
         saveReminders();
       }
+
       function renderReminderWidget() {
         // Clear current list
         reminderList.innerHTML = "";
@@ -2366,6 +2417,7 @@
           });
         }
       }
+
       // Save reminders to localStorage
       function saveReminders() {
         // Create a copy of reminders without timeoutIds (since they can't be serialized)
@@ -2382,6 +2434,7 @@
           JSON.stringify(remindersToSave)
         );
       }
+
       // Load reminders from localStorage
       function loadReminders() {
         const savedReminders = localStorage.getItem("weddingReminders");
@@ -2433,13 +2486,26 @@
           }
         }
       }
+
       // Initialize the page
       document.addEventListener("DOMContentLoaded", () => {
+        // Load dark mode preference
+        const savedDarkMode =
+          localStorage.getItem("weddingDarkMode") === "true";
+        if (savedDarkMode) {
+          toggleDarkMode();
+        }
+
+        // Load saved tasks if available
+        loadWeddingTasks();
+
         // Load saved reminders
         loadReminders();
+
         renderTabs();
         renderTabContent();
         renderReminderWidget();
+
         // Filter button functionality
         const filterButtons = document.querySelectorAll(".filter-btn");
         filterButtons.forEach((button) => {
@@ -2454,20 +2520,24 @@
             renderTabContent();
           });
         });
+
         // Dark mode toggle
         darkModeToggle.addEventListener("click", toggleDarkMode);
+
         // Search functionality
         searchInput.addEventListener("input", handleSearch);
+
         // Export to PDF
         exportPdfBtn.addEventListener("click", exportToPDF);
+
         // Print functionality
         printBtn.addEventListener("click", printChecklist);
-        
+
         // Add Task functionality
         addTaskBtn.addEventListener("click", showAddTaskForm);
         cancelAddTaskBtn.addEventListener("click", hideAddTaskForm);
         saveAddTaskBtn.addEventListener("click", saveNewTask);
-        
+
         // Reminder widget functionality
         reminderWidgetHeader.addEventListener("click", toggleReminderWidget);
         cancelQuickReminderBtn.addEventListener(
@@ -2475,8 +2545,10 @@
           closeQuickReminderForm
         );
         saveQuickReminderBtn.addEventListener("click", saveQuickReminder);
+
         // Notification close functionality
         notificationClose.addEventListener("click", hideCuteNotification);
+
         // Clear errors when user starts typing in date or time fields
         quickReminderDate.addEventListener("input", () => {
           if (dateError.classList.contains("show")) {
@@ -2484,6 +2556,7 @@
             quickReminderDate.classList.remove("error");
           }
         });
+
         quickReminderTime.addEventListener("input", () => {
           if (timeError.classList.contains("show")) {
             timeError.classList.remove("show");
